@@ -1,12 +1,22 @@
 # Might want to move this elsewhere?
-def string_to_float(str):
-	try:
-		return float(str)
-	except ValueError:
-		return float(0)
+def string_to_cents(str):
+	# Due to how floating point values are stored on hardware
+	# it is better to use whole integers to represent currency
+	# and format display text with the decimal '.' later.
+	dollars = cents = 0
+	exploded = str.split('.')
+	if(len(exploded) <= 2 and exploded[0].isdigit()): # There will always be a dollar amount
+		dollars = int(exploded[0])
+		if(len(exploded) == 2 and exploded[1].isdigit()): # There is not always a mantissa
+			cents = int(exploded[1])
+			if(len(exploded[1]) == 1): # For case where reads #.9 instead of #.09
+				cents *= 10
+	return (dollars * 100) + cents # Return value in cents (integer)
+
 
 class Transaction:
 	'Common base class for all transactions.'
+
 
 	string_template = """
 	Transaction Date: {0}\n
@@ -14,9 +24,10 @@ class Transaction:
 	Last Four: {2}\n
 	Description: {3}\n
 	Category: {4}\n
-	Debit: {5}\n
-	Credit: {6}\n
-	"""
+	Debit: {5}\u00A2\n
+	Credit: {6}\u00A2\n
+	""" # \u00A2 is cents symbol
+	
 
 	# Tried to make use of dict to have smaller method signature
 	# def __init__(self, *args, **kwargs):
@@ -29,8 +40,8 @@ class Transaction:
 		self.description = description
 		self.category = category
 		# Don't really need seperate debit/credit vars, for they are mutually exclusive.
-		self.debit = string_to_float(debit)
-		self.credit = string_to_float(credit)
+		self.debit = string_to_cents(debit)
+		self.credit = string_to_cents(credit)
 
 	def to_string(self):
 		return self.string_template.format(self.transaction_date, self.posted_date, self.last_four, self.description, self.category, self.debit, self.credit)
