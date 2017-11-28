@@ -51,11 +51,26 @@ def handle_file(file_path):
 		for row in reader:
 			handle_row(row)
 
-transactions = []
 # Iterate through every file in the input directory.
+transactions = []
 for f in os.listdir(input_dir):
 	if(f.endswith(dot_csv)):
 		file_path = "{0}/{1}".format(input_dir, f)
 		handle_file(file_path)
 
-# print(len(transactions))
+debits = []
+credits = []
+for t in transactions:
+	# Strictly checking both conditions, the redundancy is probably ok. 
+	print(t.description, t.debit, t.credit)
+	if(t.debit > 0 and t.credit == 0):
+		debits.append(t)
+	elif(t.debit == 0 and t.credit > 0):
+		credits.append(t)
+	else:
+		print("Not credit nor debit?") # TODO Handle this scenario.
+
+t = len(transactions)
+d = len(debits)
+c = len(credits)
+print(t,d,c,t-d-c)

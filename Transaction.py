@@ -1,3 +1,10 @@
+# Might want to move this elsewhere?
+def string_to_float(str):
+	try:
+		return float(str)
+	except ValueError:
+		return float(0)
+
 class Transaction:
 	'Common base class for all transactions.'
 
@@ -21,8 +28,9 @@ class Transaction:
 		self.last_four = last_four
 		self.description = description
 		self.category = category
-		self.debit = debit
-		self.credit = credit
+		# Don't really need seperate debit/credit vars, for they are mutually exclusive.
+		self.debit = string_to_float(debit)
+		self.credit = string_to_float(credit)
 
 	def to_string(self):
 		return self.string_template.format(self.transaction_date, self.posted_date, self.last_four, self.description, self.category, self.debit, self.credit)
