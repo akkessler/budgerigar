@@ -3,10 +3,17 @@ import csv
 
 input_dir = "input"
 
-for file_name in os.listdir(input_dir):
-	fp = "{0}/{1}".format(input_dir, file_name)
-	print(fp)
-	with open(fp, 'rb') as f:
+def handle_row(r):
+	print(r)
+
+def handle_file(file_path):
+	print(file_path)
+	with open(file_path, 'rb') as f:
 		reader = csv.reader(f)
 		for row in reader:
-			print(row)
+			handle_row(row)
+
+# Iterate through every file in the input directory
+for f in os.listdir(input_dir):
+	file_path = "{0}/{1}".format(input_dir, f)
+	handle_file(file_path)
