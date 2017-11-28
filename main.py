@@ -6,7 +6,8 @@ from Transaction import Transaction
 dot_csv = ".csv"
 input_dir = "input"
 date_formats = ["%m/%d/%y", "%Y-%m-%d"]
-curr_date_format = date_formats[0]
+curr_date_format = date_formats[0] # 'curr'ent date format
+currency_format = "${0}.{1} USD"
 
 # TODO Consider taking date_format as a parameter instead.
 def parse_dates(t_date, p_date):
@@ -43,11 +44,11 @@ def handle_row(raw):
 	transactions.append(transaction)
 
 def handle_file(file_path):
-	print(file_path)
+	# print(file_path)
 	with open(file_path, 'rb') as f:
 		reader = csv.reader(f)
 		header = next(reader, None)
-		print(header)
+		# print(header)
 		for row in reader:
 			handle_row(row)
 
@@ -58,11 +59,13 @@ for f in os.listdir(input_dir):
 		file_path = "{0}/{1}".format(input_dir, f)
 		handle_file(file_path)
 
+
 debits = []; credits = []
 debit_total = credit_total = 0
+expense_by_category = {}
 for t in transactions:
 	# Strictly checking both conditions, the redundancy is probably ok. 
-	print(t.to_string())
+	# print(t.to_string())
 	if(t.debit > 0 and t.credit == 0):
 		debits.append(t)
 		debit_total += t.debit
@@ -72,8 +75,17 @@ for t in transactions:
 	else:
 		print("Not credit nor debit?") # TODO Handle this scenario.
 
-t = len(transactions)
-d = len(debits)
-c = len(credits)
-print(t,d,c,t-d-c)
-print(debit_total, credit_total, debit_total-credit_total)
+	if(t.category in expense_by_category):
+		expense_by_category[t.category] += t.debit - t.credit
+	else:
+		expense_by_category[t.category] = t.debit - t.credit
+
+debit_total_str = currency_format.format(debit_total / 100, str(debit_total % 100).zfill(2))
+credit_total_str = currency_format.format(credit_total / 100, str(credit_total % 100).zfill(2))
+
+print("# of Debits : {0}\n# of Credits : {1}\n".format(len(debits), len(credits)))
+print("Debit Total : {0}\nCredit Total : {1}\n".format(debit_total_str, credit_total_str))
+for key in expense_by_category:
+	value = expense_by_category[key]
+	value_str = currency_format.format(value / 100, str(value % 100).zfill(2))
+	print("{0} : {1}".format(key, value_str))
