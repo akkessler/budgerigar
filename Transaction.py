@@ -21,11 +21,13 @@ string_template = """
 	Last Four: {2}\n
 	Description: {3}\n
 	Category: {4}\n
-	Debit: {5} cents\n
-	Credit: {6} cents\n
+	Debit: {5}\n
+	Credit: {6}\n
 	"""
 
 df = "%Y %b %d, %a %H:%M:%S +0000"
+
+cf = "${0}.{1} USD"
 
 class Transaction:
 	'Common base class for all transactions.'
@@ -44,10 +46,14 @@ class Transaction:
 		self.debit = string_to_cents(debit)
 		self.credit = string_to_cents(credit)
 
-	def to_string(self):
+	def to_string(self):		
 		transaction_date = strftime(df,self.transaction_date)
 		posted_date = strftime(df,self.posted_date)
-		return string_template.format(transaction_date, posted_date, self.last_four, self.description, self.category, self.debit, self.credit)
+
+		debit = cf.format(self.debit / 100, str(self.debit % 100).zfill(2))
+		credit = cf.format(self.credit / 100, str(self.credit % 100).zfill(2))
+
+		return string_template.format(transaction_date, posted_date, self.last_four, self.description, self.category, debit, credit)
 
 
 	def set_raw(self, raw):
