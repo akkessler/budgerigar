@@ -1,6 +1,7 @@
 import os
 import csv
 import time
+from Transaction import Transaction
 
 dot_csv = ".csv"
 input_dir = "input"
@@ -10,6 +11,7 @@ curr_date_format = date_formats[0]
 # TODO Consider taking date_format as a parameter instead.
 def parse_dates(t_date, p_date):
 	global curr_date_format
+	transaction_date = posted_date = None
 	try: # Use the most last used date format before trying others.
 		transaction_date = time.strptime(t_date, curr_date_format)
 		posted_date = time.strptime(p_date, curr_date_format)
@@ -26,18 +28,19 @@ def parse_dates(t_date, p_date):
 				break
 			except ValueError as e:
 				print(str(e))
-		return None, None
 	return transaction_date, posted_date
 
-def handle_row(r):
+def handle_row(raw):
 	# TODO Refactor from hard-coded indices.
-	transaction_date, posted_date = parse_dates(r[0], r[1])
-	last_four = r[2].zfill(4)
-	description = r[3]
-	category = r[4]
-	debit = r[5]
-	credit = r[6]
-	print(description, debit)
+	transaction_date, posted_date = parse_dates(raw[0], raw[1])
+	last_four = raw[2].zfill(4)
+	description = raw[3]
+	category = raw[4]
+	debit = raw[5]
+	credit = raw[6]
+	transaction = Transaction(transaction_date, posted_date, last_four, description, category, debit, credit)
+	transaction.set_raw(raw)
+	transactions.append(transaction)
 
 def handle_file(file_path):
 	print(file_path)
@@ -48,8 +51,11 @@ def handle_file(file_path):
 		for row in reader:
 			handle_row(row)
 
+transactions = []
 # Iterate through every file in the input directory.
 for f in os.listdir(input_dir):
 	if(f.endswith(dot_csv)):
 		file_path = "{0}/{1}".format(input_dir, f)
 		handle_file(file_path)
+
+# print(len(transactions))
