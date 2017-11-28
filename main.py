@@ -60,10 +60,9 @@ for f in os.listdir(input_dir):
 
 debits = []; credits = []
 debit_total = credit_total = 0
-reject_total = 0
 for t in transactions:
 	# Strictly checking both conditions, the redundancy is probably ok. 
-	print(t.description, t.debit, t.credit)
+	print(t.to_string())
 	if(t.debit > 0 and t.credit == 0):
 		debits.append(t)
 		debit_total += t.debit
@@ -71,7 +70,6 @@ for t in transactions:
 		credits.append(t)
 		credit_total += t.credit
 	else:
-		reject_total += 1
 		print("Not credit nor debit?") # TODO Handle this scenario.
 
 t = len(transactions)
@@ -79,4 +77,3 @@ d = len(debits)
 c = len(credits)
 print(t,d,c,t-d-c)
 print(debit_total, credit_total, debit_total-credit_total)
-print(reject_total)

@@ -1,3 +1,5 @@
+from time import strftime
+
 # Might want to move this elsewhere?
 def string_to_cents(str):
 	# Due to how floating point values are stored on hardware
@@ -13,21 +15,20 @@ def string_to_cents(str):
 				cents *= 10
 	return (dollars * 100) + cents # Return value in cents (integer)
 
-
-class Transaction:
-	'Common base class for all transactions.'
-
-
-	string_template = """
+string_template = """
 	Transaction Date: {0}\n
 	Posted Date: {1}\n
 	Last Four: {2}\n
 	Description: {3}\n
 	Category: {4}\n
-	Debit: {5}\u00A2\n
-	Credit: {6}\u00A2\n
-	""" # \u00A2 is cents symbol
-	
+	Debit: {5} cents\n
+	Credit: {6} cents\n
+	"""
+
+df = "%Y %b %d, %a %H:%M:%S +0000"
+
+class Transaction:
+	'Common base class for all transactions.'
 
 	# Tried to make use of dict to have smaller method signature
 	# def __init__(self, *args, **kwargs):
@@ -44,7 +45,10 @@ class Transaction:
 		self.credit = string_to_cents(credit)
 
 	def to_string(self):
-		return self.string_template.format(self.transaction_date, self.posted_date, self.last_four, self.description, self.category, self.debit, self.credit)
+		transaction_date = strftime(df,self.transaction_date)
+		posted_date = strftime(df,self.posted_date)
+		return string_template.format(transaction_date, posted_date, self.last_four, self.description, self.category, self.debit, self.credit)
+
 
 	def set_raw(self, raw):
 		self.raw = raw
