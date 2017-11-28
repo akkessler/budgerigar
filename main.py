@@ -45,7 +45,7 @@ def handle_row(raw):
 
 def handle_file(file_path):
 	# print(file_path)
-	with open(file_path, 'rb') as f:
+	with open(file_path, 'r') as f:
 		reader = csv.reader(f)
 		header = next(reader, None)
 		# print(header)
@@ -80,12 +80,12 @@ for t in transactions:
 	else:
 		expense_by_category[t.category] = t.debit - t.credit
 
-debit_total_str = currency_format.format(debit_total / 100, str(debit_total % 100).zfill(2))
-credit_total_str = currency_format.format(credit_total / 100, str(credit_total % 100).zfill(2))
+debit_total_str = currency_format.format(debit_total // 100, str(debit_total % 100).zfill(2))
+credit_total_str = currency_format.format(credit_total // 100, str(credit_total % 100).zfill(2))
 
 print("# of Debits : {0}\n# of Credits : {1}\n".format(len(debits), len(credits)))
 print("Debit Total : {0}\nCredit Total : {1}\n".format(debit_total_str, credit_total_str))
 for key in expense_by_category:
 	value = expense_by_category[key]
-	value_str = currency_format.format(value / 100, str(value % 100).zfill(2))
+	value_str = currency_format.format(value // 100, str(value % 100).zfill(2))
 	print("{0} : {1}".format(key, value_str))

@@ -50,8 +50,8 @@ class Transaction:
 		transaction_date = strftime(df,self.transaction_date)
 		posted_date = strftime(df,self.posted_date)
 
-		debit = cf.format(self.debit / 100, str(self.debit % 100).zfill(2))
-		credit = cf.format(self.credit / 100, str(self.credit % 100).zfill(2))
+		debit = cf.format(self.debit // 100, str(self.debit % 100).zfill(2))
+		credit = cf.format(self.credit // 100, str(self.credit % 100).zfill(2))
 
 		return string_template.format(transaction_date, posted_date, self.last_four, self.description, self.category, debit, credit)
 
