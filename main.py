@@ -30,9 +30,14 @@ def parse_dates(t_date, p_date):
 	return transaction_date, posted_date
 
 def handle_row(r):
-	# print(r)
+	# TODO Refactor from hard-coded indices.
 	transaction_date, posted_date = parse_dates(r[0], r[1])
-	print(transaction_date, posted_date)
+	last_four = r[2].zfill(4)
+	description = r[3]
+	category = r[4]
+	debit = r[5]
+	credit = r[6]
+	print(description, debit)
 
 def handle_file(file_path):
 	print(file_path)
