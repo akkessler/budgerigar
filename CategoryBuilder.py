@@ -1,6 +1,5 @@
 from Category import Category
 import pickle
-import fileinput
 
 class CategoryBuilder:
 	'Object to help build categories and fill out the tree.'
@@ -11,7 +10,7 @@ class CategoryBuilder:
 	def __init__(self, fin=None):
 		cat_id = CategoryBuilder.cat_count
 		CategoryBuilder.cat_count += 1
-		if(fin is None or fin == ""):
+		if((fin is None) or (fin == "")):
 			self.root = Category(None, cat_id)
 		else:
 			self.root = pickle.load(open(fin,'rb'))
@@ -30,7 +29,6 @@ class CategoryBuilder:
 
 	def print_children(self):
 		for c in self.root.children: c.print_data()
-
 
 def cmd_load():
 	global cb
